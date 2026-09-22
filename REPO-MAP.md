@@ -108,7 +108,7 @@ Mimo-Desktop/                     ← 克隆到 {SKILLS_ROOT}
 
 ### 内容写作硬规则（写技能时）
 
-1. **路径**：一律 `{VAULT_PATH}` / `{SKILLS_ROOT}` / `~/.config/...`，禁止 `C:\Users\...`、`/Users/...`
+1. **路径**：一律 `{VAULT_PATH}` / `{SKILLS_ROOT}` / `~/.config/...`；禁止写入带用户名的用户主目录绝对路径（Windows/macOS 均如此）
 2. **命令块**：Windows 与 macOS **成对给出**（Get-Date↔date、Move-Item↔mv、Select-String↔grep、$env:MIMO_PYTHON↔python3）
 3. **解释器**：优先 `$MIMO_PYTHON`；勿写死单机 Python 全路径（config 中 python_windows 仅兜底）
 4. **换行**：文本文件 **LF**（`.gitattributes: text=auto eol=lf`）；新文件写完后检查
