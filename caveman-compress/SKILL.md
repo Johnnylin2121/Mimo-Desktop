@@ -1,24 +1,22 @@
 ---
 name: caveman-compress
 description: >
-  Compress natural language memory files (CLAUDE.md, MEMORY.md（本机记忆）, todos, preferences) into
-  caveman format to save input tokens. Preserves all technical substance, code, URLs, and structure.
-  Compressed version overwrites the original file. Backup: manual path saves FILE.original.md
-  alongside the source; CLI path saves under %LOCALAPPDATA%\caveman-compress\backups\.
-  Trigger: /caveman-compress FILEPATH or "compress memory file". Confirm with the user before
-  compressing MEMORY.md（本机记忆） — it holds sensitive sections, and the CLI path sends content
-  to the API when ANTHROPIC_API_KEY is set.
+  Compress natural-language memory files (MEMORY.md, todos, preferences) into caveman format to
+  save input tokens (PASSIVE-first). AUTO-TRIGGER: user asks to compress/shrink a memory or prefs
+  file, or to save tokens on MEMORY.md / CLAUDE.md / todos — confirm then run. Explicit:
+  "/caveman-compress FILEPATH" or "compress memory file". Confirm before overwriting MEMORY.md
+  (sensitive sections). Backup: <file>.original.md beside source (manual path local-only).
 ---
 
 # Caveman Compress
 
 ## Purpose
 
-Compress natural language files (CLAUDE.md, todos, preferences) into caveman-speak to reduce input tokens. Compressed version overwrites original. Human-readable backup saved as `<filename>.original.md`.
+Compress natural language files into caveman-speak to reduce input tokens. Overwrites original. Backup: `<filename>.original.md`.
 
 ## Trigger
 
-`/caveman-compress <filepath>` or when user asks to compress a memory file.
+**Passive:** user asks to compress a memory/prefs file or save tokens on one → confirm, then run. Explicit: `/caveman-compress <filepath>`.
 
 ## Process（MiMo Desktop 适配：无 claude CLI / ANTHROPIC_API_KEY）
 

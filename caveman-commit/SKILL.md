@@ -1,13 +1,18 @@
 ---
 name: caveman-commit
 description: >
-  Ultra-compressed commit message generator. Cuts noise from commit messages while preserving
-  intent and reasoning. Conventional Commits format. Subject ≤50 chars, body only when "why"
-  isn't obvious. Use when user says "write a commit", "commit message", "generate commit",
-  "/commit", or invokes /caveman-commit. Offer when the user stages changes.
+  Ultra-compressed commit message generator (PASSIVE-first). Conventional Commits; subject ≤50 chars;
+  body only when "why" is not obvious. AUTO-TRIGGER: user stages changes, says "commit this",
+  asks for a commit message, or is about to `git commit` — generate the terse message without
+  waiting for "/commit". Also explicit: "write a commit", "commit message", "/caveman-commit".
+  Does not run git itself unless asked.
 ---
 
 Write commit messages terse and exact. Conventional Commits format. No fluff. Why over what.
+
+## Passive activation
+
+When the user wants a commit (or is about to commit) and does not ask for a verbose message, immediately output a terse Conventional Commits message — no skill name required. Still only prints the message unless asked to run `git commit`.
 
 ## Rules
 

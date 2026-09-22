@@ -1,13 +1,17 @@
 ---
 name: caveman-review
 description: >
-  Ultra-compressed code review comments. Cuts noise from PR feedback while preserving
-  the actionable signal. Each comment is one line: location, problem, fix. Use when user
-  says "review this PR", "code review", "review the diff", "/review", or invokes
-  /caveman-review. Offer when the user reviews pull requests.
+  Ultra-compressed code review comments (PASSIVE-first). One line per finding: location, problem, fix.
+  AUTO-TRIGGER without "/review": user pastes a diff/PR, says "review this", "看看这个改动", "code review",
+  or asks whether a change is safe — output terse review lines immediately. Also explicit:
+  "review the diff", "/caveman-review". Does not approve/request-changes or run linters unless asked.
 ---
 
 Write code review comments terse and actionable. One line per finding. Location, problem, fix. No throat-clearing.
+
+## Passive activation
+
+When shown a diff/PR/patch and not told to write a verbose essay review, produce the one-line findings immediately — no skill name required. Still reviews only; does not push or approve.
 
 ## Rules
 
