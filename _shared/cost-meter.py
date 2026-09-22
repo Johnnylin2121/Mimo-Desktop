@@ -158,11 +158,34 @@ def fmt(report: dict, title: str) -> None:
             print(f"  - {k}: ${v['cost']:.6f} ({v['n']} msgs, {v['total']} tok)")
 
 
+def fmt_card(report: dict, title: str) -> None:
+    """Markdown 卡片风,便于直接贴进会话。"""
+    t = report["tokens"]
+    print(f"### 💰 {title}")
+    print()
+    print(f"**今日/区间费用 ${report['cost']:.4f}** · {report['messages']} 条消息")
+    print()
+    print("| 模型 | 费用 | 消息 | tokens |")
+    print("|------|------|------|--------|")
+    models = report.get("models") or {}
+    if not models:
+        print("| — | $0.0000 | 0 | 0 |")
+    for k, v in sorted(models.items(), key=lambda x: -x[1]["cost"]):
+        print(f"| `{k}` | ${v['cost']:.4f} | {v['n']} | {v['total']:,} |")
+    print()
+    print(
+        f"<sub>tokens: in {t['input']:,} · out {t['output']:,} · "
+        f"cacheR {t['cache_read']:,} · total {t['total']:,}</sub>"
+    )
+    print("<sub>口径: mimocode.db 本地账本 cost 字段,只读</sub>")
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(description="MiMo cost meter (reads local mimocode.db)")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     sub.add_parser("today", help="local today cost/tokens")
+    sub.add_parser("card", help="markdown card: today cost by model")
     s = sub.add_parser("session", help="one session (default: current-ish latest)")
     s.add_argument("session_id", nargs="?")
     w = sub.add_parser("week", help="last 7 days")
@@ -177,6 +200,9 @@ def main(argv=None) -> int:
         if args.cmd == "today":
             msgs = list(iter_msgs(conn, since_ts=start_of_day_utc()))
             fmt(agg(msgs), "今日费用（本机时区 0 点起，UTC 存储时间近似）")
+        elif args.cmd == "card":
+            msgs = list(iter_msgs(conn, since_ts=start_of_day_utc()))
+            fmt_card(agg(msgs), "今日费用")
         elif args.cmd == "session":
             if args.session_id:
                 msgs = [

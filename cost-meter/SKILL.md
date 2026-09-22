@@ -25,29 +25,38 @@ description: >
 ## 执行
 
 ```powershell
-# Windows / MiMo Desktop
+# Windows / MiMo Desktop — 默认用卡片形态（贴近费用面板观感）
 $PY = $env:MIMO_PYTHON
 $CM = "$env:USERPROFILE\.config\mimocode\skills\_shared\cost-meter.py"
-& $PY "$CM" today          # 今日
+& $PY "$CM" card           # ★ 今日费用卡片（按模型表）
+& $PY "$CM" today          # 纯文本明细
 & $PY "$CM" session        # 最近活动会话
-& $PY "$CM" session <id>   # 指定会话
-& $PY "$CM" week           # 近 7 日
-& $PY "$CM" models 7       # 按模型（近 N 日）
+& $PY "$CM" session <id>
+& $PY "$CM" week
+& $PY "$CM" models 7
 ```
 ```bash
 # macOS
-python3 ~/.config/mimocode/skills/_shared/cost-meter.py today
+python3 ~/.config/mimocode/skills/_shared/cost-meter.py card
 ```
 
 数据库路径异常时设 `MIMO_DB=<path/to/mimocode.db>`。
 
-## 输出要求
+## 输出要求（卡片优先）
 
-1. 先跑 `today`，再按需 `session` / `week` / `models`
-2. **金额**：展示 `$x.xxxxxx`（账本 cost 原样，勿自行按价格表重算）
-3. **注明口径**：cost 为 MiMo 已计算字段；部分 provider 可能为 0（订阅/内部计价）
-4. tokens 分：input / output / cache_read / total；大数字用千分位
-5. 不把完整 session id 列表刷屏；默认摘要 + 用户点名再展开
+1. **默认跑 `card`**，把 Markdown 卡片原样贴进回复（今日费用 + 按模型表 + tokens 摘要）
+2. 用户要更细再补 `session` / `week` / `models`
+3. **金额**：`$x.xxxxxx`（账本 cost 原样，勿自行按价格表重算）
+4. **注明口径**：cost 为 MiMo 已计算字段；部分 provider 可能为 0（订阅/内部计价）
+5. 预算提醒：若用户配置了日预算，超 80%/100% 在卡片下方加粗——预算值来自用户，不写死
+
+## 定时摘要（App 内，可选）
+
+若本会话工具表含 **`automation_update`**（Desktop 自动化可用时），在用户明确要求「每天/每小时报一次费用」时创建任务，提示词示例：
+
+> 运行 `cost-meter.py card`，只输出当日费用卡片，不要额外解释。
+
+工具表**没有** `automation_update` 时：告知自动化面板当前不可用，不要伪造调度；用户也可在左侧栏 **Automations** 自行创建，触发词写「查今日费用卡片」。
 
 ## 边界
 
