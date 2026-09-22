@@ -18,7 +18,7 @@ description: 自动将文件同步到Obsidian知识库，包括复制文件、�
 | 新建/覆盖笔记（含自动建父目录） | `write` |
 | 文中间插入/局部改写 | `read` 后 `edit`（或 `write` 全量重写） |
 | 追加内容 | `edit` 追加到文末 |
-| 移动/重命名单篇 | 文件系统移动（pwsh `Move-Item`）；链接重写依赖 Obsidian 按名解析 |
+| 移动/重命名单篇 | 文件系统移动（Windows: `Move-Item`；macOS: `mv`）；链接重写依赖 Obsidian 按名解析 |
 | 批量/整目录移动（全库链接重写+清空目录） | `node "$HOME/.config/mimocode/skills/_shared/vault-batch.mjs" move <旧> <新> --dry-run` |
 | 删除 | **移入 vault `.trash/`（可逆）**；不可逆删除【禁用】 |
 | 断链检查（Step 6） | `grep` 搜 `[[`；配合 `vault-batch.mjs dangling` |

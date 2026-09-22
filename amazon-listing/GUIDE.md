@@ -79,8 +79,8 @@
 
 ## 文件位置
 
-- Skill 指令:`%USERPROFILE%\.config\mimocode\skills\amazon-listing\SKILL.md`
-- 本指南:`%USERPROFILE%\.config\mimocode\skills\amazon-listing\GUIDE.md`
-- 词频脚本:`%USERPROFILE%\.config\mimocode\skills\amazon-listing\scripts\kw_analysis.py`
+- Skill 指令:`~/.config/mimocode/skills/amazon-listing/SKILL.md`
+- 本指南:`~/.config/mimocode/skills/amazon-listing/GUIDE.md`
+- 词频脚本:`~/.config/mimocode/skills/amazon-listing/scripts/kw_analysis.py`
 
 修改 SKILL.md 后下一轮对话自动生效;本技能仓库改动需 `git add -A && git commit && git push origin main`(仓库: `Johnnylin2121/Mimo-Desktop.git`,**禁止**向 `dsh-agent` 推送)。

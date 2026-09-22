@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 亚马逊选品分析脚本
 基于卖家精灵导出的关键词数据，执行趋势、机会、利润、综合评分分析。
@@ -67,16 +67,27 @@ DEFAULT_PARAMS = {
 
 
 def _vault_path_from_memory():
-    """从 %USERPROFILE%\\.dsh\\MEMORY.md 的「Obsidian Vault」行解析 vault 路径（即 {VAULT_PATH}）。"""
-    mem = Path(os.environ.get('USERPROFILE', str(Path.home()))) / '.dsh' / 'MEMORY.md'
-    try:
-        for line in mem.read_text(encoding='utf-8').splitlines():
-            if 'Obsidian Vault' in line:
-                m = re.search(r'`([^`]+)`', line)
-                if m:
-                    return Path(m.group(1).strip())
-    except OSError:
-        pass
+    """从本机记忆文件 MEMORY.md 的「Obsidian Vault」行解析 vault 路径（即 {VAULT_PATH}）。
+    依次尝试：环境变量 VAULT_PATH > 当前/上级目录 MEMORY.md > ~/.dsh/MEMORY.md（兼容旧机）> ~/.config/mimocode 相关记忆。
+    """
+    env = os.environ.get('VAULT_PATH')
+    if env:
+        return Path(env)
+    candidates = [
+        Path.cwd() / 'MEMORY.md',
+        Path.cwd().parent / 'MEMORY.md',
+        Path.home() / '.dsh' / 'MEMORY.md',
+        Path.home() / '.config' / 'mimocode' / 'MEMORY.md',
+    ]
+    for mem in candidates:
+        try:
+            for line in mem.read_text(encoding='utf-8').splitlines():
+                if 'Obsidian Vault' in line:
+                    m = re.search(r'`([^`]+)`', line)
+                    if m:
+                        return Path(m.group(1).strip())
+        except OSError:
+            continue
     return None
 
 

@@ -1,4 +1,4 @@
-﻿<p align="center">
+<p align="center">
   <img src="https://em-content.zobj.net/source/apple/391/rock_1faa8.png" width="80" />
 </p>
 
@@ -14,7 +14,7 @@ Upstream (Claude Code): a Claude Code skill that compresses your project memory 
 
 Claude read `CLAUDE.md` on every session start. If file big, cost big. Caveman make file small. Cost go down forever.
 
-**DSH note**: DSH never auto-loads memory files. The `amazon-desk` and `trading-desk` agent presets read `MEMORY.md（本机记忆）` on demand at task start, so compressing it cuts real input tokens. Ask the user before compressing it — the file holds sensitive sections (cipher dictionary, positions), and the optional CLI path sends file content to the Anthropic API when `ANTHROPIC_API_KEY` is set. Backup: manual path writes `<file>.original.md` alongside the source; CLI path writes under `%LOCALAPPDATA%\caveman-compress\backups\`.
+**MiMo note**: Compress natural-language memory files (MEMORY.md / preferences / todos) so sessions load fewer tokens. Ask the user before compressing MEMORY.md — it may hold sensitive sections. Manual path writes `<file>.original.md` alongside the source (local only). Optional CLI path may call an external API if keys are configured — prefer manual compression. Backup CLI path (Windows): `%LOCALAPPDATA%\caveman-compress\backups\`; (macOS): `~/Library/Caches/caveman-compress/backups/`.
 
 ## What It Do
 

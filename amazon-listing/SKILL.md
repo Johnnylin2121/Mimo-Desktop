@@ -91,11 +91,17 @@ Output: single progressively-built `.md` file written to `{VAULT_PATH}/工作/�
 Do NOT install random browser automation via curl — prefer `webfetch`, then the built-in `playwright` skill.
 
 ### Keyword Analysis — use the bundled script
-Script: `%USERPROFILE%\.config\mimocode\skills\amazon-listing\scripts\kw_analysis.py` — run with `python` (stdlib only; this machine's `python3` is a broken stub). Feed it the collected competitor text (each title followed by its bullets in a UTF-8 txt file; script auto-assigns alternating blocks: odd blocks = titles of 5 competitors, even = their bullets — OR simpler: pass two files: titles.txt (one per line), bullets.txt (one per line)).
+Script: `{SKILLS_ROOT}/amazon-listing/scripts/kw_analysis.py` (stdlib only). Run with `$MIMO_PYTHON` on Windows, or `python3` on macOS (`{SKILLS_ROOT}` = `~/.config/mimocode/skills`). Feed it the collected competitor text (each title followed by its bullets in a UTF-8 txt file; script auto-assigns alternating blocks: odd blocks = titles of 5 competitors, even = their bullets — OR simpler: pass two files: titles.txt (one per line), bullets.txt (one per line)).
 
-```pwsh
-# Recommended layout: one file, title line first, bullet lines after, blank line between competitors
-python "$env:USERPROFILE\.config\mimocode\skills\amazon-listing\scripts\kw_analysis.py" -i competitors.txt
+```powershell
+# Windows / MiMo Desktop
+$SKILL = "$env:USERPROFILE\.config\mimocode\skills\amazon-listing"
+& $env:MIMO_PYTHON "$SKILL\scripts\kw_analysis.py" -i competitors.txt
+```
+```bash
+# macOS
+SKILL="$HOME/.config/mimocode/skills/amazon-listing"
+python3 "$SKILL/scripts/kw_analysis.py" -i competitors.txt
 ```
 
 Methodology — script outputs the weighted 1-gram/2-gram ranking only; the agent completes the rest on top of it:

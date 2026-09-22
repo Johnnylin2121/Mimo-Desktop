@@ -45,7 +45,7 @@ description: 交易记忆批量审阅、冲突归因与记忆总表生成工作�
 
 ## 2. 前置步骤
 
-1. 时间校验（Get-Date）
+1. 时间校验（Windows: `Get-Date`；macOS: `date`）
 2. 读本机记忆文件 MEMORY.md：Vault 路径、记忆维护规则、当前冻结状态（无记录则向用户询问 `{VAULT_PATH}`）
 3. 读交接文件（若存在）：确认当前策略状态（冻结令等直接影响记忆"当前有效"判定）
 4. 确认整理范围：全部 / 增量（自上次整理后）
@@ -61,8 +61,7 @@ Get-ChildItem "{VAULT_PATH}\交易体系\交易记忆" -Filter "2026-*.md" |
 - 每篇提取五要素：**rules（frontmatter）/ 预测假设 / 实际结果 / 偏差分析 / 规则修正**
 - "资产锚状态备忘"类内容 = 快照层，**不进总表**（易腐烂）
 
-> ⚠️ **实战坑：pwsh 输出截断**。文件多时输出超上限会被截断并给出 spill 文件路径（`%LOCALAPPDATA%\Temp\dsh-spill-*\xxx-pwsh.txt`）。
-> 处理：用 grep 在 spill 文件中搜 `FILE: 2026-` 确认哪些篇没读到 → 用 read 工具按 offset 补读缺失区段。**必须逐篇清点，防止漏读**。
+> ⚠️ **实战坑：pwsh/长输出截断**。文件多时输出超上限可能被截断并给出临时 spill 文件路径（Windows 常见于 `%TEMP%` / `$env:TEMP`）。**不依赖固定 spill 路径**——用 grep 在截断输出中搜 `FILE: 2026-` 确认哪些篇没读到 → 用 read 工具按 offset 补读缺失区段。**必须逐篇清点，防止漏读**。
 
 ## 4. Step 2：分类归因（五类 + 口径统一）
 
@@ -100,10 +99,16 @@ Get-ChildItem "{VAULT_PATH}\交易体系\交易记忆" -Filter "2026-*.md" |
 ## 6. Step 4：归档原始记忆
 
 ```powershell
+# Windows
 $dst = "{VAULT_PATH}\交易体系\交易记忆\记忆归档"
 New-Item -ItemType Directory -Force $dst | Out-Null
-Get-ChildItem "{VAULT_PATH}\交易体系\交易记忆" -Filter "2026-*.md" | Sort-Object Name |
-  Move-Item -Destination $dst
+Get-ChildItem "{VAULT_PATH}\交易体系\交易记忆" -Filter "2026-*.md" | Sort-Object Name | Move-Item -Destination $dst
+```
+```bash
+# macOS
+dst="{VAULT_PATH}/交易体系/交易记忆/记忆归档"
+mkdir -p "$dst"
+mv "{VAULT_PATH}"/交易体系/交易记忆/2026-*.md "$dst"/
 ```
 
 - **移动而非删除**（铁律：历史文件必须全部保留）

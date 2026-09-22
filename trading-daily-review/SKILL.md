@@ -72,10 +72,14 @@ description: A股每日复盘工作流——涵盖盘前观察清单制定、盘
 
 **前置步骤：时间校验**
 ```powershell
-# 获取当前日期，确认交易日
+# Windows
 Get-Date -Format 'yyyy-MM-dd dddd'
-# 确认前一交易日、前二交易日日期（遇节假日回溯）
 ```
+```bash
+# macOS
+date '+%Y-%m-%d %A'
+```
+# 确认前一交易日、前二交易日日期（遇节假日回溯）
 
 **输入**：
 - 前两个交易日复盘文件（`{VAULT_PATH}/交易体系/每日复盘/`）
@@ -174,7 +178,8 @@ node -e "fetch('https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&fields=f1
 > **前置条件：确认 `dsh-market.mjs` 为 9/17 之后版本**（`_shared/dsh-market.mjs` 含 `kind: 'nf'` 分流）。
 > **若脚本是旧版 → 三种行情共用 A 股 10 字段布局 → 期货 `price`/`bid`/`high`/`low` 全部错位**，读数完全不可信。
 > ```powershell
-> Select-String -Path "$HOME\.config\mimocode\skills\_shared\dsh-market.mjs" -Pattern "kind: 'nf'"   # 有输出 = 已修复
+> Select-String -Path "$HOME/.config/mimocode/skills/_shared/dsh-market.mjs" -Pattern "kind: 'nf'"   # Windows: 有输出 = 已修复
+> grep -n "kind: 'nf'" "$HOME/.config/mimocode/skills/_shared/dsh-market.mjs"   # macOS: 有输出 = 已修复
 > ```
 > **修复后（正确语义）**：
 > | 前缀 | 布局 | 实时价字段 | 昨结算/昨收 | 输出标记 |
@@ -250,11 +255,15 @@ MiMo Desktop **无** `timer_agent` / `notify` / 任务看板等 DSH 插件工具
 
 **前置步骤：时间校验 + 记忆检索**
 ```powershell
-# 获取当前日期，确认今日为交易日
+# Windows：确认今日为交易日
 Get-Date -Format 'yyyy-MM-dd dddd'
+```
+```bash
+# macOS
+date '+%Y-%m-%d %A'
+```
 # 确认前一交易日、前二交易日日期（遇节假日回溯）
 # 如前一交易日无复盘文件，继续向前追溯直到找到两个有效复盘文件
-```
 
 > **入口**：用 domain-memory 检索 trading 域相关记忆（交易记忆/操作规则），避免重复踩坑。
 
@@ -286,10 +295,14 @@ Get-Date -Format 'yyyy-MM-dd dddd'
 **复盘后归档检查**：
 创建当日复盘文件后，检查 `交易体系/每日复盘/` 目录，将超过前两个交易日的复盘文件移入 `存档/` 子目录。主目录仅保留今日、前日、前前日三个交易日的复盘文件。
 ```powershell
-# 获取目录中所有复盘文件，按日期排序
+# Windows：列出复盘文件并归档
 Get-ChildItem "{VAULT_PATH}/交易体系/每日复盘/"*.md | Sort-Object Name
-# 将早于前前日的文件移入存档
 Move-Item "{VAULT_PATH}/交易体系/每日复盘/YYYY-MM-DD 每日复盘.md" "{VAULT_PATH}/交易体系/每日复盘/存档/"
+```
+```bash
+# macOS
+ls "{VAULT_PATH}/交易体系/每日复盘/"*.md
+mv "{VAULT_PATH}/交易体系/每日复盘/YYYY-MM-DD 每日复盘.md" "{VAULT_PATH}/交易体系/每日复盘/存档/"
 ```
 
 **复盘后记忆提炼（第5步，必做）**：

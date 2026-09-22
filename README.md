@@ -4,6 +4,7 @@ MiMo Desktop 技能配置仓库 — 从个人 DSH（DeepSeek Harness）技能集
 
 > **源仓库**：技能原版在 `Johnnylin2121/dsh-agent`（DSH 专用，本仓不回写、不推送该仓库）。
 > 本仓为 MiMo Desktop 适配版真源：`git@github.com:Johnnylin2121/Mimo-Desktop.git`。
+> **双端共维**：Windows 主机 + macOS 笔记本两台 MiMo Desktop 共同维护本仓 — 动手前先读 [`REPO-MAP.md`](REPO-MAP.md)（架构/放置规则/双端协议/脱敏规范/维护注意）与 [`_shared/PORTABILITY.md`](_shared/PORTABILITY.md)。
 > 许可：MIT（见 `LICENSE`）。
 
 ## 安装
