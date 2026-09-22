@@ -11,6 +11,11 @@ dependencies:
   - "domain-memory (记忆沉淀工作流；审阅依据=交易体系/交易记忆/00-交易记忆总表.md)"
 ---
 
+# 环境与执行纪律（MiMo 2026-09-22）
+
+1. 无 `xueqiu_*`/`web_search`/`obsidian_*`——联网用 `webfetch`/`dsh-market`；文件用内置 read/write。
+2. **每轮 ≤3 tool**；write 与 task 分轮；会话内禁止重复 read 本 SKILL；失败 1 次减负。
+
 # 早读复核 (briefing-review)
 
 ## 定位与权限边界（硬约束）

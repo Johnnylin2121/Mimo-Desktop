@@ -8,6 +8,13 @@ description: >
   消歧：盘后复盘语境命中本 skill；全 vault 扫描用 obsidian-reconcile。
 ---
 ⚠️ **OneDrive 同步提醒**：本 skill 写入的 Vault 位于 OneDrive，大量/频繁写入可能触发同步延迟与文件锁，建议分批操作。
+
+# 环境与执行纪律（MiMo 2026-09-22）
+
+1. 无 `xueqiu_*`/`obsidian_*` 插件——勿调用；文件用内置 read/write/edit；行情三源见 trading-daily-review。
+2. **每轮 ≤3 tool**；write 与 task 分轮；会话内禁止重复 read 本 SKILL。
+3. 数据已齐禁止重拉；失败 1 次减为单 call 或文字。
+
 # 实时矛盾检测
 
 ## 定位

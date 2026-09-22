@@ -3,6 +3,12 @@ name: trading-briefing-fetch
 description: 早报自动层数据抓取（akshare+快讯）。商品价格表/美股指数/财联社系快讯 → 输出自动层 markdown 到 交易体系/早读复核/，作为「早读复核」（trading-briefing-review）的自动数据源与人工参考。用户说"跑早报"、"抓今天数据"、"生成早报草稿"时使用。
 ---
 
+# 环境与执行纪律（MiMo 2026-09-22）
+
+1. 无 `xueqiu_*`——勿调用；RSS 插件不存在，vault 已有 digest 可选加载。
+2. **每轮 ≤3 tool**；write 与 task 分轮；会话内禁止重复 read 本 SKILL；失败 1 次减负。
+3. 依赖 Python+akshare（`$MIMO_PYTHON` 或 python3 自装）；脚本失败保留 [待补] 并文字汇报。
+
 # 早报自动层数据抓取 (briefing-fetch)
 
 ## 定位

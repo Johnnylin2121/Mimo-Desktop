@@ -3,6 +3,14 @@ name: trading-daily-review
 description: A股每日复盘工作流——涵盖盘前观察清单制定、盘中实时验证、盘后完整复盘的全流程。包括数据获取（东方财富API/多源交叉）、本地文件记录、Obsidian归档、连贯性验证、假设检验、交易计划审查。当用户要求做复盘、盘中验证、制定观察清单、审查交易计划时使用此skill。
 ---
 
+# 环境与执行纪律（MiMo 2026-09-22，优先于下文历史正文）
+
+1. **雪球**：无 `xueqiu_*` 插件 → **永久跳过**；三源 = 东财 push2 + 新浪 `sina`(`nf_|hf_`) + `dsh-market`（含 `tencent`）；`_shared/xueqiu.mjs` 仅网络可达时可选，失败标注即可，**禁止必跑、禁止因缺失重试**。
+2. **每轮 ≤3 tool**；`write` 与 `task` **分轮**；禁止同轮捆绑 write+bash+read+glob。
+3. **终值已齐禁止重复拉取**；**会话内禁止重复 read 本 SKILL**。
+4. **失败 1 次 → 减为单 call 或纯文字**，禁止同模板重试。
+5. 本环境无 `timer_agent`/`notify`/`obsidian_*`/`excel_*` 插件——文件用内置 read/write/edit；Excel 用 `_shared/excel-probe.py`。
+
 # 每日复盘工作流
 
 > **Vault 路径**：`{VAULT_PATH}`（占位符，由 agent 从 MEMORY.md 读取本机实际路径后替换）。
