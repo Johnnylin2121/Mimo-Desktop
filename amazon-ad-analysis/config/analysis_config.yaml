@@ -1,0 +1,438 @@
+# Amazon Ad Analysis 配置文件
+# 版本: 1.0
+# 更新日期: 2026-08-23
+
+# 阈值配置（唯一阈值来源，SKILL.md / glossary 只引用此处）
+thresholds:
+  acos:
+    good: 0.20          # 优秀：核心盈利
+    acceptable: 0.35    # 良好：稳定维持
+    needs_optimization: 0.50  # 需关注：优化
+    poor: 1.0           # 严重亏损：>100% 优先否定
+  # 派生说明：需优化档 = (acceptable, needs_optimization]；使用中统一取以下档位：
+  # <20% 优秀 | 20-35% 良好 | 35-50% 需关注 | 50-100% 需优化 | >100% 严重亏损
+  
+  cvr:
+    good: 0.15
+    average: 0.10
+  
+  cpc:
+    high: 5.0
+  
+  roas:
+    good: 3.0   # 健康线 >3（优秀>4）；SKILL Phase 2A 与 glossary 引用此档
+  
+  spend:
+    min_for_analysis: 5.0
+
+  # ── 广告集中度（2026-09-17 新增，Phase 2D 使用）────────────────────────
+  # 口径：相对「均分基准」归一化。N 个活动均分时 Top1 = 1/N，故
+  #   top1_ratio = Top1份额 × N   （均分=1.0，越大越集中）
+  #   hhi_ratio  = HHI × N        （均分=1.0）
+  # 优势：与活动数无关，可跨 ASIN / 店铺比较；含义可解释（2.0 = 最大活动预算是均分水平的两倍）
+  #
+  # 阈值来源（三元锚定，非拍脑袋）：
+  #   ① 语义锚定：ratio=1 均分 / 2.0 风险线 / 1.5 观察线
+  #   ② 实测回算：vault 内 5 个历史样本（28天花费口径，样本 ASIN 见校准台账，不入库）
+  #        样本1 N=9 Top1 66.0% → 5.94 │ 样本2 N=5 75.0% → 3.75
+  #        样本3 N=5 37.0% → 1.85 │ 样本4 N=5 36.2% → 1.81
+  #        样本5 N=4 32.3% → 1.29
+  #      → 三分清晰：RISK 2 / WATCH 2 / OK 1（绝对占比法会把 32-37% 糊成一档）
+  #   ③ 回测回填：见下方 calibration 段（累计样本后切分位数替换本处数值）
+  concentration:
+    top1_ratio_risk: 2.0          # 🔴 单点依赖：Top1份额 × 活动数
+    top1_ratio_watch: 1.5         # 🟡 头部集中观察线
+    hhi_ratio_risk: 2.0           # 🔴 强化判据（与 top1_ratio 同向时升级确认）
+    min_campaigns_for_check: 3    # 活动数少于此值集中度无统计意义 → 跳过并声明
+
+  # ── 阈值校准机制（2026-09-17 新增）──────────────────────────────────
+  # 原则：**风险阈值不用中位数**——中位数按定义把样本切成 50/50，作为"动作触发器"
+  #      会命中一半对象，失去判别力；且 n 小的时候分位数无统计意义。
+  #      正确顺序 = ① 语义/先验锚定（现在）→ ② 逐次回测记录（进行中）→ ③ 样本足够再切分位数（后期）
+  calibration:
+    ledger_path: '{VAULT_PATH}/工作/亚马逊工作管理/记忆管理/阈值校准台账.md'
+    min_rows_for_percentile: 20   # 累计行数达到此值才允许用分位数替换锚定值
+    review_trigger_days: 60       # 或距上次复核超过此天数
+    backlog_days: 30              # 回填窗口：标记后 30 天的实际结果必须回填
+
+  # ── 付费-自然结构（2026-09-17 新增，Phase 5.4 使用）────────────────────
+  paid_natural:
+    core_term_paid_click_share: 0.20  # [待校准] 单搜索词点击 ÷ 该ASIN总广告点击
+    natural_order_share_target: 0.50  # 与 Phase 2A 健康线一致（自然订单占比目标）
+    # 四象限输入方向（代理改写自白皮书 L695-700；原文用自然位/广告位，我方无该字段）
+    quadrant_inputs: ['ad_spend_wow', 'natural_orders_wow']
+
+  # ── 生命周期阶段判定（2026-09-17 新增，Phase 6 D0 使用）────────────────
+  # 白皮书 L566 / L568-574：阶段看经营约束，不看上架天数。阈值由本 skill 自定 [待校准]
+  lifecycle:
+    ac_order_share_high: 0.60   # [待校准] 广告订单占比高于此 → 指向新品期
+    ac_order_share_low: 0.30    # [待校准] 广告订单占比低于此 → 指向成熟期
+
+  # ── 品牌新客占比决策含义（2026-09-17 新增，Phase 4B.1 使用）─────────────
+  # 逻辑迁移自白皮书 L495-496（原文为站外创作者语境）→ 用于品牌广告归因层
+  new_customer:
+    strong: 0.50   # [待校准] ≥此值 → 判为拉新渠道，提高优先级并测试规模化
+    weak: 0.20     # [待校准] ≤此值 → 判为承接已有需求/复购，不计入新增获客
+
+# 列名映射配置
+column_mapping:
+  product:
+    asin: ['ASIN', 'asin', 'Asin']
+    sales: ['销量', 'Sales', 'sales']
+    revenue: ['销售额', 'Revenue', 'revenue', 'Sales Amount']
+    orders: ['订单量', 'Orders', 'orders', 'Order Count']
+    sessions: ['Sessions-Total', 'Sessions', 'sessions']
+    cvr: ['CVR', 'cvr', 'Conversion Rate']
+    acos: ['ACOS', 'ACoS', 'acos', 'Advertising Cost of Sales']
+    tacos: ['TACOS', 'TACoS', 'tacos', 'Total ACOS']
+    roas: ['ROAS', 'Roas', 'roas', 'Return on Ad Spend']
+    ad_spend: ['广告花费', 'Ad Spend', 'ad_spend', 'Spend']
+    ad_sales: ['广告销售额', 'Ad Sales', 'ad_sales']
+    natural_orders: ['自然订单量', 'Natural Orders', 'natural_orders']
+    impressions: ['展示量', 'Impressions', 'impressions', '曝光量']
+    clicks: ['点击量', 'Clicks', 'clicks', '点击']
+    cpc: ['CPC', 'cpc', 'Cost Per Click']
+    ctr: ['CTR', 'ctr', 'Click Through Rate']
+    date: ['日期', 'Date', 'date', '报告日期']
+    brand: ['品牌', 'Brand', 'brand']
+    product_name: ['品名', 'Product Name', 'product_name', '标题']
+    price: ['售价', 'Price', 'price', '售价(总价)']
+  
+  ad:
+    campaign: ['广告活动', '广告活动名称', 'Campaign', 'Campaign Name']
+    ad_group: ['广告组', '广告组名称', 'Ad Group', 'Ad Group Name']
+    asin: ['广告ASIN', 'ASIN', 'asin']
+    impressions: ['展示量', 'Impressions', 'impressions', '曝光量']
+    clicks: ['点击量', 'Clicks', 'clicks', '点击']
+    ctr: ['点击率 (CTR)', 'CTR', 'ctr']
+    cpc: ['单次点击成本 (CPC)', 'CPC', 'cpc']
+    spend: ['花费', 'Spend', 'spend', '广告花费']
+    sales: ['7天总销售额', '7天总销售额($)', 'Sales', '销售额']
+    orders: ['7天总订单数(#)', '7天总订单数', 'Orders', '订单数']
+    acos: ['广告投入产出比 (ACOS) 总计', 'ACOS', 'ACoS', 'acos']
+    roas: ['总广告投资回报率 (ROAS)', 'ROAS', 'Roas', 'roas']
+    cvr: ['7天的转化率', '转化率', 'CVR', 'cvr']
+    date: ['日期', 'Date', 'date']
+  
+  search:
+    search_term: ['客户搜索词', '搜索词', 'Search Term', 'Customer Search Term']
+    impressions: ['展示量', 'Impressions', 'impressions', '曝光量']
+    clicks: ['点击量', 'Clicks', 'clicks', '点击']
+    ctr: ['点击率 (CTR)', 'CTR', 'ctr']
+    cpc: ['单次点击成本 (CPC)', 'CPC', 'cpc']
+    spend: ['花费', 'Spend', 'spend', '广告花费']
+    sales: ['7天总销售额', '7天总销售额($)', 'Sales', '销售额']
+    orders: ['7天总订单数(#)', '7天总订单数', 'Orders', '订单数']
+    acos: ['广告投入产出比 (ACOS) 总计', 'ACOS', 'ACoS', 'acos']
+    cvr: ['7天的转化率', '转化率', 'CVR', 'cvr']
+    start_date: ['开始日期', 'Start Date', 'start_date']
+    end_date: ['结束日期', 'End Date', 'end_date']
+    date: ['日期', 'Date', 'date']
+  
+  brand:
+    asin: ['已购买的asin', 'ASIN', 'asin']
+    campaign: ['广告活动', 'Campaign', 'campaign']
+    ad_group: ['广告组', 'Ad Group', 'ad_group']
+    traffic_type: ['引流类型', 'Traffic Type', 'traffic_type']
+    date: ['日期', 'Date', 'date']
+    sales_14d: ['14天总销售额', '14天总销售额($)', '14d Sales']
+    orders_14d: ['14天总订单数', '14d Orders']
+    units_14d: ['14天总件数', '14d Units']
+    new_customer_sales: ['14天新客户订单销售额', '14d New Customer Sales']
+    new_customer_orders: ['14天新客户订单', '14d New Customer Orders']
+    new_customer_units: ['14天新客户订单件数', '14d New Customer Units']
+
+# 品类配置
+categories:
+  usb_hub:
+    compound_roots:
+      - 'usb hub'
+      - 'usb 3.0 hub'
+      - 'usb 2.0 hub'
+      - 'powered usb hub'
+      - 'usb hub powered'
+      - 'usb splitter'
+      - 'usb port'
+      - 'usb extender'
+      - 'usb charger'
+      - 'usb adapter'
+      - 'usb cable'
+      - 'usb drive'
+      - 'usb c hub'
+      - 'usb c adapter'
+      - 'usb c cable'
+      - '4 port'
+      - '5 port'
+      - '7 port'
+      - '10 port'
+      - '4-port'
+      - '5-port'
+      - 'aluminum'
+      - 'portable'
+      - 'individual switch'
+    category_name: 'USB Hub'
+  
+  electronics:
+    compound_roots:
+      - 'wireless charger'
+      - 'fast charger'
+      - 'wall charger'
+      - 'car charger'
+      - 'phone case'
+      - 'screen protector'
+      - 'earbuds'
+      - 'headphones'
+      - 'bluetooth speaker'
+      - 'power bank'
+      - 'portable charger'
+      - 'lightning cable'
+      - 'usb c cable'
+      - 'hdmi cable'
+      - 'phone holder'
+      - 'car mount'
+      - 'wireless earbuds'
+    category_name: 'Electronics'
+  
+  home:
+    compound_roots:
+      - 'air purifier'
+      - 'humidifier'
+      - 'dehumidifier'
+      - 'space heater'
+      - 'electric kettle'
+      - 'coffee maker'
+      - 'blender'
+      - 'food processor'
+      - 'vacuum cleaner'
+      - 'robot vacuum'
+      - 'steam mop'
+      - 'bed sheets'
+      - 'pillow case'
+      - 'comforter'
+      - 'mattress pad'
+      - 'curtains'
+      - 'blackout curtains'
+      - 'shower curtain'
+    category_name: 'Home & Kitchen'
+  
+  custom:
+    compound_roots: []
+    category_name: 'Custom'
+
+# 停用词配置
+stop_words:
+  english:
+    - 'a'
+    - 'an'
+    - 'the'
+    - 'for'
+    - 'with'
+    - 'and'
+    - 'or'
+    - 'to'
+    - 'in'
+    - 'on'
+    - 'at'
+    - 'by'
+    - 'of'
+    - 'is'
+    - 'it'
+    - 'its'
+    - 'my'
+    - 'your'
+    - 'his'
+    - 'her'
+    - 'our'
+    - 'their'
+    - 'this'
+    - 'that'
+    - 'am'
+    - 'are'
+    - 'was'
+    - 'were'
+    - 'be'
+    - 'been'
+    - 'being'
+    - 'have'
+    - 'has'
+    - 'had'
+    - 'do'
+    - 'does'
+    - 'did'
+    - 'will'
+    - 'would'
+    - 'could'
+    - 'should'
+    - 'may'
+    - 'might'
+    - 'shall'
+    - 'can'
+    - 'need'
+    - 'dare'
+    - 'ought'
+    - 'used'
+    - 'from'
+    - 'as'
+    - 'into'
+    - 'through'
+    - 'during'
+    - 'before'
+    - 'after'
+    - 'above'
+    - 'below'
+    - 'between'
+    - 'out'
+    - 'off'
+    - 'over'
+    - 'under'
+    - 'again'
+    - 'further'
+    - 'then'
+    - 'once'
+    - 'here'
+    - 'there'
+    - 'when'
+    - 'where'
+    - 'why'
+    - 'how'
+    - 'all'
+    - 'both'
+    - 'each'
+    - 'few'
+    - 'more'
+    - 'most'
+    - 'other'
+    - 'some'
+    - 'such'
+    - 'no'
+    - 'nor'
+    - 'not'
+    - 'only'
+    - 'own'
+    - 'same'
+    - 'so'
+    - 'than'
+    - 'too'
+    - 'very'
+    - 'just'
+    - 'because'
+    - 'but'
+    - 'if'
+    - 'while'
+    - 'about'
+    - 'against'
+    - 'up'
+    - 'down'
+    - 'you'
+    - 'he'
+    - 'she'
+    - 'we'
+    - 'they'
+    - 'me'
+    - 'him'
+    - 'her'
+    - 'us'
+    - 'them'
+    - 'what'
+    - 'which'
+    - 'who'
+    - 'whom'
+    - 'these'
+    - 'those'
+    - 'i'
+
+# 输出配置
+output:
+  directory: './output'
+  # Obsidian Vault 输出根目录（Phase 0 需求澄清时确认/覆盖）
+  # 默认结构见 SKILL.md 归档章节；本店实测使用: {VAULT_PATH}\工作\亚马逊工作管理\亚马逊分析（2026-08-28 用户确认默认值）
+  vault_root: '{VAULT_PATH}/工作/亚马逊工作管理/亚马逊分析'
+  attachment_dir: '{VAULT_PATH}/工作/亚马逊工作管理/附件'
+  save_checkpoints: true
+  report_format:
+    - 'markdown'
+    - 'excel'
+  
+  # Markdown报告配置
+  markdown:
+    include_tables: true
+    include_charts: false
+    max_rows_in_table: 50
+  
+  # Excel报告配置
+  excel:
+    include_summary_sheet: true
+    include_data_sheets: true
+    max_rows_per_sheet: 10000
+
+# 分析配置
+analysis:
+  # 周趋势分析
+  weekly_trend:
+    enabled: true
+    weeks: 4  # 分析最近4周
+  
+  # ASIN深度分析
+  asin_deep_dive:
+    enabled: true
+    max_asins: 10  # 最多分析的ASIN数量
+    priority_rules:
+      - 'high_sales_high_acos'  # 高销量高ACOS
+      - 'low_sales_low_acos'    # 低销量低ACOS
+      - 'user_specified'        # 用户指定
+  
+  # 关键词分析
+  keyword_analysis:
+    enabled: true
+    min_spend: 5.0  # 最低花费阈值
+    min_orders: 1   # 最低订单数阈值
+    top_n: 50       # 展示前N个词根
+  
+  # 品牌广告分析
+  brand_analysis:
+    enabled: true
+    include_new_customer_analysis: true
+
+# Listing 抓取档位（Phase 4A 使用，按序降级）
+listing_scrape:
+  modes: ['jina', 'manual', 'skip']
+  jina_url_template: 'https://r.jina.ai/http://amazon.com/dp/{ASIN}'
+
+# 执行环境
+environment:
+  # Windows 下 pandas 所在解释器（`python` 可能指向无 pandas 的旧版本）
+  # 占位：agent 执行时展开。MiMo Desktop 用 $env:MIMO_PYTHON（内置，含 pandas/openpyxl）；备用 python3 需自装依赖（见 _shared/PORTABILITY.md）
+  python_windows: '%LOCALAPPDATA%\Programs\Python\Python312\python.exe'
+  force_utf8: true   # 控制台输出 UTF-8，避免中文列名乱码/emoji 崩溃
+
+# 数据验证配置
+validation:
+  required_columns:
+    product:
+      - 'asin'
+      - 'sales'
+      - 'revenue'
+    ad:
+      - 'campaign'
+      - 'impressions'
+      - 'clicks'
+      - 'spend'
+    search:
+      - 'search_term'
+      - 'impressions'
+      - 'clicks'
+      - 'spend'
+  
+  min_rows: 10
+  max_null_percentage: 0.5
+  
+  anomaly_detection:
+    acos_max: 10.0  # 1000%
+    cpc_max: 50.0
+    spend_min: 0.01
+
+# 日志配置
+logging:
+  level: 'INFO'  # DEBUG, INFO, WARNING, ERROR
+  file: './output/analysis.log'
+  console: true

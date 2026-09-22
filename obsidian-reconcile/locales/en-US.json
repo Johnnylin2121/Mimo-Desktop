@@ -1,0 +1,4 @@
+﻿{
+    "displayName":  "Vault Reconcile",
+    "brief":  "Scan Obsidian notes for contradictions and resolve or flag"
+}
