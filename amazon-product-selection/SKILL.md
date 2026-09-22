@@ -49,7 +49,14 @@ Phase 2: 深度分析（用户选定关键词后）
 
 ### 输入要求
 
-> **大文件先探结构**：用 `$env:MIMO_PYTHON` + pandas/openpyxl 看 sheet/行列数/类型分布/空值率/样例，确认字段与列序后再交给下方脚本；抽查子集用 `df.head()`，汇总核对用 `groupby`/`pivot_table`。**DSH 的 `excel_describe`/`excel_filter`/`excel_pivot` 插件工具在本环境不存在**。
+> **大文件先探结构**（替代 excel-kit）：用 `_shared/excel-probe.py` 的 `describe` / `columns` / `filter` / `pivot`（`$MIMO_PYTHON` 或 `python3`），确认字段与列序后再交给 `scripts/analysis.py`。
+> ```powershell
+> $PY = $env:MIMO_PYTHON
+> & $PY "$env:USERPROFILE\.config\mimocode\skills\_shared\excel-probe.py" describe --input <excel_path> --n 8
+> ```
+> ```bash
+> python3 ~/.config/mimocode/skills/_shared/excel-probe.py describe --input <excel_path> --n 8
+> ```
 
 Excel 文件至少包含以下字段：
 - `关键词` — 西班牙语/英语关键词

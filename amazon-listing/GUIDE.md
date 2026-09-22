@@ -25,7 +25,7 @@
 
 ### Step 1 — 竞品数据 + 核心关键词 Top10
 **抓取降级链**(最多各试 2 次;详见 MEMORY.md「网页抓取路径策略」):
-0. **抓取优先级**:`webfetch`(首选,快+省 token;内容完整即用)→ 内容截断/CAPTCHA/需登录态 → **内置 `playwright` 技能**打开商品页读标题/五点/变体(**DSH 的 `browser_*` / `read_page` / `browser-skill` 在 MiMo Desktop 不存在,勿调用**)→ 浏览器不可用 → **你手动粘贴**竞品标题+五点(每竞品:标题一行,下面跟五点行)
+0. **抓取优先级**:`webfetch`(首选) → 截断/CAPTCHA/需登录 → **Playwright MCP**(`playwright-mcp:playwright`;勿用 DSH `browser_*`) → 浏览器不可用 → **你手动粘贴**竞品标题+五点
 
 **分析**:自动运行 `scripts/kw_analysis.py`(标题词×3 / 五点词×1,输出 1-gram/2-gram 排名),AI 再筛出 Top10 核心词。你审核是否为品类定义词(如 "Hub USB 7 Puertos",而非纯属性 "Aluminio")。
 

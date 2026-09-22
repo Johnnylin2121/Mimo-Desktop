@@ -34,7 +34,8 @@
 | 环境变量（本会话） | `$env:FOO = "bar"` | `export FOO=bar` |
 | 列目录/查找 | `Get-ChildItem` / `Select-String` | `ls` / `grep` |
 | 网络抓取 | `webfetch` 工具；行情/接口优先 `dsh-market.mjs`（node fetch/OpenSSL，规避 schannel） | 同左 |
-| 浏览器自动化 | 内置 `playwright` 技能；静态页优先 `webfetch` | 同左 |
+| 浏览器自动化 | ①`webfetch` ②Playwright MCP（`playwright-mcp:playwright`）③内置 `playwright` 技能 | 同左 |
+| Excel 探查 | `_shared/excel-probe.py`（describe/columns/filter/pivot，`$MIMO_PYTHON`） | 同左（`python3`） |
 | 表格探查 | `$PY` + pandas/openpyxl（无 excel-kit 插件） | 同左 |
 | 路径分隔符 | `\` 或 `/`（pwsh 都吃） | `/` |
 | 编码 / 换行 | UTF-8 无 BOM；仓库统一 **LF**（`.gitattributes`） | 同左 |

@@ -135,7 +135,21 @@ Phase 7  归档：按 references/output-spec.md 生成 Markdown + 9-sheet Excel 
 **处理步骤**：
 
 1. **读取Excel**：读取所有上传文件的结构；**先输出列名清单到 UTF-8 文件**（Windows 终端中文列名乱码，禁止直接打印中文列名）
-   - **大文件/列多先用 $MIMO_PYTHON + pandas/openpyxl 探结构**（MiMo 内置解释器已含依赖）：读 sheet 清单 + 行列数 + 每列类型分布/空值率/样例 → 据此定列映射；抽查子集用 `df.head()` / `df.query()`，交叉汇总核对用 `groupby`/`pivot_table`。生成/改写 xlsx 走下方 Python 脚本。**DSH 的 `excel_describe`/`excel_filter`/`excel_pivot` 插件工具在本环境不存在**。
+   - **大文件/列多先用 `_shared/excel-probe.py` 探结构**（替代 excel-kit；解释器 `$MIMO_PYTHON` / `python3`）：
+     ```powershell
+     # Windows
+     $PY = $env:MIMO_PYTHON
+     $PROBE = "$env:USERPROFILE\.config\mimocode\skills\_shared\excel-probe.py"
+     & $PY "$PROBE" describe --input <file.xlsx> --n 8
+     & $PY "$PROBE" columns  --input <file.xlsx>
+     & $PY "$PROBE" filter   --input <file.xlsx> --sheet Sheet1 --query "销售额 > 100" --n 20
+     & $PY "$PROBE" pivot    --input <file.xlsx> --sheet Sheet1 --index 店铺 --values 销售额 --agg sum
+     ```
+     ```bash
+     # macOS
+     python3 ~/.config/mimocode/skills/_shared/excel-probe.py describe --input <file.xlsx> --n 8
+     ```
+     生成/改写 xlsx 仍走下方 `analysis_v2.py`。
 2. **数据清洗**：
    - `--` → `0`
    - `0%` → `0`
@@ -656,7 +670,7 @@ listing_data = {
 
 **实测取数路径（2026-09-17 验证通过）**：Amazon 商品页 → **Sorftime** 插件悬浮面板 → 「反查关键词」。
 - **插件身份（写死，便于校验）**：`Sorftime Save`，Chrome 扩展 id `aadiiicebnjmjmibjengdohedcfeekeg`（2026-09-17 实测版本 1.4.8.7，locale zh_CN）。⚠️ **不是卖家精灵（Sellersprite）**——两者功能相近，勿混称。
-- 打开已登录的 Amazon 商品页（内置 `playwright` 技能），打开 Sorftime 插件「反查关键词」面板读取字段
+- 用 **Playwright MCP**（或内置 playwright）打开已登录 Amazon 商品页 → Sorftime「反查关键词」；无扩展/登录态则记 B 级降级
 - 面板另提供「关键词调研」「竞品分析」，以及概览项「流量词概览：自然流量词 / 广告流量词」
 - **实测环境**：amazon.com.mx 商品页（MX 站点可用，账号已登录）。**实测记录中的具体 ASIN 不入库**（仓库政策：数据与产物不进库），如需复现请在会话内自行选取本店 ASIN。
 

@@ -84,11 +84,11 @@ Output: single progressively-built `.md` file written to `{VAULT_PATH}/工作/�
 1–5 competitor ASINs/URLs, same marketplace (≥3 recommended; warn if fewer, still proceed).
 
 ### Crawling — priority order (NO infinite retries; max 2 attempts per source)
-1. **webfetch** (first choice): fetch `https://www.<marketplace>/dp/<ASIN>` — parse title/bullets from returned text.
-2. If webfetch fails or content is truncated (page noise drops bullets/variations — Amazon worst) / CAPTCHA / needs login → **playwright skill fallback**: load the built-in `playwright` skill, open the dp URL, wait for `load` (do NOT use `networkidle` — Amazon long-polling connections time it out), read title, bullets, variation swatches, then close. **DSH 的 `browser_*` / `read_page` / `browser-skill` 在 MiMo Desktop 不存在** — do not call them.
-3. If the browser path is unavailable → **stop crawling and ask the user to paste** competitor title + bullets manually (match format: title line, then bullet lines).
+1. **webfetch** (first): fetch `https://www.<marketplace>/dp/<ASIN>` — parse title/bullets from returned text.
+2. If truncated / CAPTCHA / needs login → **Playwright MCP** (connector `playwright-mcp:playwright`): open dp URL, wait `load` (NOT `networkidle`), read title/bullets/variations. **Never call DSH `browser_*` / `read_page` / `browser-skill`.** Fallback: built-in `playwright` skill if MCP off.
+3. Still no data → **ask user to paste** title + bullets (title line, then bullets).
 
-Do NOT install random browser automation via curl — prefer `webfetch`, then the built-in `playwright` skill.
+Do NOT drive browsers via curl. Order: `webfetch` → Playwright MCP → paste.
 
 ### Keyword Analysis — use the bundled script
 Script: `{SKILLS_ROOT}/amazon-listing/scripts/kw_analysis.py` (stdlib only). Run with `$MIMO_PYTHON` on Windows, or `python3` on macOS (`{SKILLS_ROOT}` = `~/.config/mimocode/skills`). Feed it the collected competitor text (each title followed by its bullets in a UTF-8 txt file; script auto-assigns alternating blocks: odd blocks = titles of 5 competitors, even = their bullets — OR simpler: pass two files: titles.txt (one per line), bullets.txt (one per line)).

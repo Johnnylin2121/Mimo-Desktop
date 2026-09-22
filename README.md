@@ -64,16 +64,16 @@ Copy-Item "$env:TEMP\Mimo-Desktop\*" "$HOME\.config\mimocode\skills\" -Recurse -
 
 | DSH 依赖 | MiMo Desktop 替代 |
 |----------|-------------------|
-| `obsidian_*` 工具（dsh-obsidian 插件） | 内置 `read` / `write` / `edit` / `grep` / `glob` 文件工具；批量移动用 `vault-batch.mjs` |
-| `xueqiu_*` 工具（dsh-xueqiu 插件） | 交叉源降级为「东财 + 新浪」双源（`dsh-market.mjs`） |
-| `excel_describe` / `excel_filter` / `excel_pivot`（dsh-excel-kit） | `$MIMO_PYTHON` + pandas/openpyxl 探查（MIMO_PYTHON 已预装） |
-| `browser_*` / `read_page` / `browser-skill`（DSH 浏览器插件） | `webfetch` 抓取优先；需登录态/CAPTCHA 时用内置 `playwright` 技能或请用户粘贴 |
-| `web_search` | `webfetch`（或本会话可用的检索能力） |
-| `timer_agent` / `notify`（dsh-timer-agent / dsh-notifier） | 无人值守调度：会话内手动触发；OS 级定时由用户自行配置（技能不再引用不存在的工具） |
-| `~/.dsh/MEMORY.md` 的 Vault 路径 | 从本机记忆文件（MEMORY.md）读取 `{VAULT_PATH}`；无记录则询问用户 |
-| 硬编码 Python312 全路径 | `$env:MIMO_PYTHON`（MiMo 内置，含 pandas/openpyxl；akshare 等额外依赖按需自装） |
-| `~/.dsh/skills/...` | `~/.config/mimocode/skills/...`（即 `{SKILLS_ROOT}`） |
-| DSH 插件（peak-cost / rss-digest / obsidian / xueqiu / excel-kit 等） | 不适用；相关段落已移除或改为「可选外部数据源」 |
+| `obsidian_*`（dsh-obsidian） | `read`/`write`/`edit`/`grep`/`glob` + `_shared/vault-batch.mjs` |
+| `xueqiu_*`（dsh-xueqiu） | 东财+新浪双源（`dsh-market.mjs`） |
+| `excel_describe/filter/pivot`（excel-kit） | **`_shared/excel-probe.py`**（describe/columns/filter/pivot） |
+| `browser_*` / `read_page` / browser-skill | ①`webfetch` ②**Playwright MCP**（`playwright-mcp:playwright`）③用户粘贴 |
+| `web_search` | `webfetch` / Playwright 打开搜索页 |
+| `timer_agent` / `notify` | 会话内手动触发；OS 计划任务由用户配置 |
+| `~/.dsh/MEMORY.md` Vault 路径 | 本机 MEMORY.md 的 `{VAULT_PATH}`；无则询问 |
+| 硬编码 Python312 | `$MIMO_PYTHON`（含 pandas/openpyxl） |
+| `~/.dsh/skills/...` | `{SKILLS_ROOT}` = `~/.config/mimocode/skills` |
+| peak-cost / rss-digest 等宿主插件 | 不移植；改为可选外部数据源或手动步骤 |
 
 **占位符约定**：
 
