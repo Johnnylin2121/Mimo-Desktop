@@ -50,6 +50,7 @@ Copy-Item "$env:TEMP\Mimo-Desktop\*" "$HOME\.config\mimocode\skills\" -Recurse -
 | | `caveman-review` | 极简代码审查 |
 | **通用** | `grill-me` | 苏格拉底式需求拷问（决策树多轮问答） |
 | | `cost-meter` | 会话/今日费用与 token 查询（读本机 mimocode.db，复现 dsh-cost-meter 核心） |
+| | `find-skills` | skills.sh 生态搜索与安装（基于 KimYx0207/findskill，Windows/MiMo 适配） |
 | **仓库运维** | `skill-sync` | 与 GitHub 的同步流程（本仓专属） |
 
 ### 共享层
