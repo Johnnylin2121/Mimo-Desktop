@@ -65,7 +65,7 @@ Copy-Item "$env:TEMP\Mimo-Desktop\*" "$HOME\.config\mimocode\skills\" -Recurse -
 | DSH 依赖 | MiMo Desktop 替代 |
 |----------|-------------------|
 | `obsidian_*`（dsh-obsidian） | `read`/`write`/`edit`/`grep`/`glob` + `_shared/vault-batch.mjs` |
-| `xueqiu_*`（dsh-xueqiu） | 东财+新浪双源（`dsh-market.mjs`） |
+| `xueqiu_*`（dsh-xueqiu） | **三源主链**：东财+新浪+**腾讯 `dsh-market tencent`**；可选第四源 `_shared/xueqiu.mjs`（匿名 cookie，网络可达时） |
 | `excel_describe/filter/pivot`（excel-kit） | **`_shared/excel-probe.py`**（describe/columns/filter/pivot） |
 | `browser_*` / `read_page` / browser-skill | ①`webfetch` ②**Playwright MCP**（`playwright-mcp:playwright`）③用户粘贴 |
 | `web_search` | `webfetch` / Playwright 打开搜索页 |

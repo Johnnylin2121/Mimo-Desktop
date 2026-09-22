@@ -22,26 +22,32 @@ description: A股每日复盘工作流——涵盖盘前观察清单制定、盘
 
 ## 数据多源校验（东财口径基准 + 新浪/雪球交叉）
 
-> ⚠️ **网络取数**：优先用 `dsh-market.mjs`（node fetch/OpenSSL，规避 Windows schannel TLS 故障）与本会话 `webfetch`。**DSH 的 `xueqiu_*` 插件工具在 MiMo Desktop 不存在**——交叉源固定为「东财 + 新浪」双源：
+> ⚠️ **网络取数**：优先用 `dsh-market.mjs`（node fetch/OpenSSL）与本会话 `webfetch`。
+> **三源交叉（2026-09-22 起）**：①东方财富（口径基准）②新浪 `sina` ③**腾讯 `tencent`**（`dsh-market` 子命令，本机实测可用）。
+> **雪球**：`_shared/xueqiu.mjs`（匿名 cookie，对接原 `xueqiu_quote`/`xueqiu_kline`）——**仅当网络可达时作第四源**；本机对 `xueqiu.com:443` 曾出现 TCP 通但 HTTPS 超时，失败则跳过并在复盘注明「雪球未接入」，**不阻塞**双/三源校验。
+> DSH 的 `xueqiu_*` 插件工具在 MiMo Desktop 不存在，勿调用。
 > ```powershell
 > $MK = "$HOME/.config/mimocode/skills/_shared/dsh-market.mjs"
-> node "$MK" index / stocks "..." / sector / sina "sh600519,..." / kline "SH600519" 101 120
+> node "$MK" index / stocks "..." / sector / sina "sh600519,..." / tencent "sh600519,sz300750,sh000001" / kline "SH600519" 101 120
+> node "$HOME/.config/mimocode/skills/_shared/xueqiu.mjs" quote "SH600519,SZ300750,SH000001"   # 可选第四源
 > ```
 
-行情读数以**东方财富（`index/stocks`）为口径基准**（沿用 MEMORY 中量能外推、成交额锚点等既有修正规则），**新浪（`sina`，含买卖盘）做交叉复核**：
+行情读数以**东方财富（`index/stocks`）为口径基准**（沿用 MEMORY 中量能外推、成交额锚点等既有修正规则），**新浪（`sina`）与腾讯（`tencent`）做交叉复核**：
 
 | 用途 | 工具 | 说明 |
 |------|------|------|
 | 指数/多标的口径 | `dsh-market index/stocks` | 东财主数据，成交额为准 |
-| 交叉复核 | `dsh-market sina` | 个股实时含 bid/ask，与东财比对；⚠️ **期货字段口径见下方「sina 期货字段口径」节** |
+| 交叉复核① | `dsh-market sina` | 个股实时含 bid/ask；⚠️ **期货字段口径见下方「sina 期货字段口径」节** |
+| 交叉复核② | `dsh-market tencent` | 腾讯 `qt.gtimg.cn`，GBK；**本机实测稳定** |
+| 可选第四源 | `_shared/xueqiu.mjs quote` | 雪球公开接口；网络不可达时跳过 |
 | 涨跌家数 | `node -e` 直连东财 f104/f105/f106 | **防火墙涨跌比监控**；命令见"数据获取方式"节 |
-| K线 | `dsh-market kline` | 东财K线，无图表仅数据（101/102/103/5/15/30/60） |
+| K线 | `dsh-market kline` | 东财K线（101/102/103/5/15/30/60） |
 | 板块资金 | `dsh-market sector` | 主力净流入方向 |
 | 页面抓取 | `dsh-market get "<url>"` / `webfetch` | 公告/研报/财务页转纯文本 |
 
-**冲突规则（硬性）**：多源数值不一致时，在复盘"核心判断 / 今日验证"中**显著标注**（如 `⚠️ 数据冲突：东财 vs 新浪`），**不自动取信任一**；量能/成交额类校正以东方财富口径为准。此规则与"数据驱动、矛盾检测"铁律一致——数据打架本身就是要记录的现象。
+**冲突规则（硬性）**：多源数值不一致时，在复盘"核心判断 / 今日验证"中**显著标注**（如 `⚠️ 数据冲突：东财 vs 新浪 vs 腾讯`），**不自动取信任一**；量能/成交额类校正以东方财富口径为准。
 
-> 注：MiMo Desktop 下无雪球插件 → 退化为"东财+新浪"双源，冲突规则不变。
+> 注：主校验链 = 东财 + 新浪 + 腾讯（三源，全本机可达）；雪球可选增强，不可达不降级主链。
 
 ## 交易铁律（权威规则，优先于任何泛化判断）
 

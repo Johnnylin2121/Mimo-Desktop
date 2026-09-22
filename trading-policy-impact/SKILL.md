@@ -46,11 +46,11 @@ description: >
 ```
 
 **事件快讯/情绪补充（用工具抓取）**：
-- ⚠️ curl 可能不可用（schannel）；`dsh-market.mjs`（node.fetch）与本会话 `webfetch` 可用。**DSH 的 `xueqiu_*` 插件工具在 MiMo Desktop 不存在，勿调用**：
+- **事件快讯/情绪补充**：`dsh-market.mjs`（node.fetch）与 `webfetch`。三源=东财+新浪+**腾讯 `tencent`**；雪球 `_shared/xueqiu.mjs` 可选。**DSH `xueqiu_*` 不存在，勿调用**：
   ```powershell
   $MK = "$HOME/.config/mimocode/skills/_shared/dsh-market.mjs"
-  node "$MK" get "<新闻/公告/研报 url>"   # 抓页面转纯文本
-  node "$MK" index / stocks / sector / sina   # 行情复核
+  node "$MK" get "<新闻/公告/研报 url>"
+  node "$MK" index / stocks / sector / sina / tencent "sh600519,sz000001"
   ```
 - `node "$MK" get` 或 `webfetch` 抓取政策发布后的即时快讯与市场解读页面，作为网络检索的补充。
 - `node "$MK" sector` / `stocks` / `sina`：给受影响板块/标的口径复核与实时数据（`"市场反应追踪"` 表格的数据来源）。

@@ -34,13 +34,13 @@ description: >
 
 ## 数据多源校验（东财口径基准 + 新浪/雪球交叉）
 
-> ⚠️ **网络取数**：curl/Invoke-WebRequest 可能因 schannel 不可用；统一用 `dsh-market.mjs`（node.fetch/OpenSSL）或本会话 `webfetch`。**DSH 的 `xueqiu_*` 插件工具在 MiMo Desktop 不存在**——交叉源为东财 + 新浪：
+> ⚠️ **网络取数**：统一用 `dsh-market.mjs`（node.fetch/OpenSSL）或本会话 `webfetch`。**三源**：东财（基准）+ 新浪 `sina` + **腾讯 `tencent`**。雪球 `_shared/xueqiu.mjs` 仅网络可达时作第四源，失败跳过。**DSH 的 `xueqiu_*` 不存在**：
 > ```powershell
 > $MK = "$HOME/.config/mimocode/skills/_shared/dsh-market.mjs"
-> node "$MK" index / stocks / sector / sina / kline / get "<url>"
+> node "$MK" index / stocks / sector / sina / tencent "sh600519,sz000001" / kline / get "<url>"
 > ```
 
-- **行情/技术面**：主用东方财富（`stocks`，口径基准），用 `sina`（实时含买卖盘）**交叉复核**；K线走 `kline`（无图，纯数据）。
+- **行情/技术面**：主用东方财富（`stocks`，口径基准），用 `sina` 与 `tencent` **交叉复核**；K线走 `kline`。
 - **个股主力资金**：`dsh-market.mjs` **无个股资金子命令**（仅 index/stocks/sector/sina/kline/get）——用**三层代理**：①板块资金（`sector`）②K线量能趋势（`kline`，价量背离判断）③Vault 历史复盘主力记录（`交易体系/交易记忆/`+复盘，如南山 8/17-8/20 主力序列）；最后可提示用户用交易终端复核。
 - **舆情/事件核实**：`webfetch` / 网络检索（优先）+ `node "$MK" get "<网页>"` 补充；**商品/公告/事件异动时（如期货单日大幅波动、公司公告突发）必须联网核实驱动再写入扫描**——8/26 巴西复产核实即靠此（8/17 减产催化 1 周内回吐的完整证据链）。
 - **代码/标的名定位**：`node "$MK" get "https://searchapi.eastmoney.com/api/suggest/get?input={名}&type=14&token=D43BF722C8E33BDC906FB84D85E326E8"`，或让用户确认；`{VAULT_PATH}/wiki/entities/` 找不到对应 entity 时优先这样做。

@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env node
+#!/usr/bin/env node
 /**
  * dsh-market.mjs — node-fetch 版行情取数工具（替代 curl，绕开 schannel 出站 TLS 故障）
  *
@@ -111,6 +111,34 @@ async function cmdSina(symbolsArg) {
   console.log(JSON.stringify(out, null, 0))
 }
 
+async function cmdTencent(symbolsArg) {
+  // 腾讯行情 qt.gtimg.cn — 稳定第三源（雪球本机网络不可达时的交叉源）
+  const raw = String(symbolsArg || 'sh600519').replace(/\s+/g, '')
+  const r = await fetch(`https://qt.gtimg.cn/q=${raw}`, {
+    headers: { 'User-Agent': UA, Referer: 'https://gu.qq.com/' },
+    signal: AbortSignal.timeout(15000),
+  })
+  if (!r.ok) throw new Error(`HTTP ${r.status}`)
+  const text = decodeGbk(Buffer.from(await r.arrayBuffer()))
+  const out = []
+  for (const line of text.split('\n')) {
+    const m = line.match(/v_(\w+)="([^"]*)"/)
+    if (!m) continue
+    const f = m[2].split('~')
+    // 腾讯 ~ 布局(实测): 1=名称 2=代码 3=最新 4=昨收 5=今开 30=时间 33=最高 34=最低 37=成交额(万)
+    const price = Number(f[3])
+    const prevClose = Number(f[4])
+    const pct = prevClose ? (((price - prevClose) / prevClose) * 100).toFixed(2) : null
+    out.push({
+      symbol: m[1], kind: 'cn', name: f[1], code: f[2],
+      price, open: Number(f[5]), high: Number(f[33]), low: Number(f[34]),
+      prevClose, pct, time: f[30],
+      amountWan: Number(f[37]) || null,
+    })
+  }
+  console.log(JSON.stringify({ source: 'tencent', items: out }, null, 0))
+}
+
 async function cmdKline(symArg, periodArg, limitArg, fqtArg) {
   const raw = (symArg || 'SH600519').toUpperCase()
   let mkt, code
@@ -163,10 +191,11 @@ const [, , cmd, ...rest] = process.argv
       case 'stocks': await cmdStocks(rest[0]); break
       case 'sector': await cmdSector(rest[0]); break
       case 'sina': await cmdSina(rest[0]); break
+      case 'tencent': await cmdTencent(rest[0]); break
       case 'kline': await cmdKline(rest[0], rest[1], rest[2], rest[3]); break
       case 'get': await cmdGet(rest[0]); break
       default:
-        console.log('用法: dsh-market.mjs <index|stocks|sector|sina|kline|get> [args]')
+        console.log('用法: dsh-market.mjs <index|stocks|sector|sina|tencent|kline|get> [args]')
         process.exit(2)
     }
   } catch (e) {
