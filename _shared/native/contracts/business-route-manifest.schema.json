@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mimo-native/business-route-manifest.schema.json",
+  "title": "MiMo Native Business Route Manifest",
+  "type": "object",
+  "required": ["manifest_version", "skill", "run_id", "as_of", "fetched_at", "inputs", "external_access", "write_mode", "human_gate"],
+  "properties": {
+    "manifest_version": { "type": "string", "const": "1.0" },
+    "skill": { "type": "string" },
+    "run_id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^(?!.*[\\\\/])(?![A-Za-z]:)(?!.*\\.\\.)[^\\u0000-\\u001f]+$" },
+    "as_of": { "type": "string", "format": "date-time" },
+    "fetched_at": { "type": "string", "format": "date-time" },
+    "inputs": { "type": "object", "minProperties": 1 },
+    "external_access": { "type": "boolean" },
+    "write_mode": { "type": "string", "enum": ["draft_only", "proposal_only", "user_confirmed_write"] },
+    "human_gate": { "type": "string", "const": "required" }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "skill": { "const": "trading-briefing-fetch-native" },
+        "external_access": { "const": true },
+        "write_mode": { "const": "draft_only" },
+        "inputs": { "required": ["market_snapshot", "news_snapshot"], "additionalProperties": false }
+      }
+    },
+    {
+      "properties": {
+        "skill": { "const": "trading-briefing-review-native" },
+        "external_access": { "const": false },
+        "write_mode": { "const": "user_confirmed_write" },
+        "inputs": { "required": ["early_read", "auto_brief", "memory_table"], "additionalProperties": false }
+      }
+    },
+    {
+      "properties": {
+        "skill": { "const": "trading-policy-impact-native" },
+        "external_access": { "const": true },
+        "write_mode": { "const": "proposal_only" },
+        "inputs": { "required": ["policy_event"], "additionalProperties": false }
+      }
+    },
+    {
+      "properties": {
+        "skill": { "const": "trading-stock-scan-native" },
+        "external_access": { "const": true },
+        "write_mode": { "const": "proposal_only" },
+        "inputs": { "required": ["stock_identity", "market_snapshot", "plans", "memory"], "additionalProperties": false }
+      }
+    },
+    {
+      "properties": {
+        "skill": { "const": "amazon-listing-native" },
+        "external_access": { "const": true },
+        "write_mode": { "const": "draft_only" },
+        "inputs": { "required": ["product_facts", "competitor_sources"], "additionalProperties": false }
+      }
+    },
+    {
+      "properties": {
+        "skill": { "const": "amazon-ad-analysis-native" },
+        "external_access": { "const": false },
+        "write_mode": { "const": "draft_only" },
+        "inputs": { "required": ["ad_manifest"], "additionalProperties": false }
+      }
+    },
+    {
+      "properties": {
+        "skill": { "const": "amazon-product-selection-native" },
+        "external_access": { "const": false },
+        "write_mode": { "const": "draft_only" },
+        "inputs": { "required": ["keyword_file"], "additionalProperties": false }
+      }
+    },
+    {
+      "properties": {
+        "skill": { "const": "trading-value-investing-native" },
+        "external_access": { "const": false },
+        "write_mode": { "const": "draft_only" },
+        "inputs": { "required": ["reference_root", "user_constraints"], "additionalProperties": false }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mimo-native/artifact.schema.json",
+  "title": "MiMo Native Artifact",
+  "type": "object",
+  "required": [
+    "artifact_id",
+    "kind",
+    "status",
+    "generator",
+    "evidence_ids",
+    "validation",
+    "human_gate"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "default": "1.0" },
+    "artifact_id": { "type": "string", "minLength": 1 },
+    "kind": { "type": "string", "minLength": 1 },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "verified", "blocked"]
+    },
+    "path": { "type": "string" },
+    "generator": { "type": "string", "minLength": 1 },
+    "evidence_ids": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "validation": {
+      "type": "object",
+      "required": ["status", "checks"],
+      "properties": {
+        "status": { "type": "string", "enum": ["passed", "failed", "degraded", "not_run"] },
+        "checks": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "human_gate": {
+      "type": "string",
+      "enum": ["not_required", "required", "approved", "rejected"]
+    }
+  },
+  "additionalProperties": false
+}

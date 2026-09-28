@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mimo-native/input-quality-manifest.schema.json",
+  "title": "MiMo Native Input Quality Manifest",
+  "type": "object",
+  "required": ["manifest_version", "run_id", "as_of", "fetched_at", "files"],
+  "properties": {
+    "manifest_version": { "type": "string", "const": "1.0" },
+    "run_id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^(?!.*[\\\\/])(?![A-Za-z]:)(?!.*\\.\\.)[^\\u0000-\\u001f]+$" },
+    "as_of": { "type": "string", "format": "date-time" },
+    "fetched_at": { "type": "string", "format": "date-time" },
+    "files": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "product_facts": { "type": "string", "pattern": "^(?!/)(?![A-Za-z]:)(?!.*\\.\\.).+$" },
+        "competitor_sources": { "type": "string", "pattern": "^(?!/)(?![A-Za-z]:)(?!.*\\.\\.).+$" },
+        "keyword_file": { "type": "string", "pattern": "^(?!/)(?![A-Za-z]:)(?!.*\\.\\.).+$" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

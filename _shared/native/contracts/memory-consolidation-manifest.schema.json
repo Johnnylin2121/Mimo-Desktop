@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mimo-native/memory-consolidation-manifest.schema.json",
+  "title": "MiMo Native Memory Consolidation Manifest",
+  "type": "object",
+  "required": ["manifest_version", "run_id", "as_of", "fetched_at", "method_acknowledged", "approval_ref", "files", "memory_table"],
+  "properties": {
+    "manifest_version": { "type": "string", "const": "1.0" },
+    "run_id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^(?!.*[\\\\/])(?![A-Za-z]:)(?!.*\\.\\.)[^\\u0000-\\u001f]+$" },
+    "as_of": { "type": "string", "format": "date-time" },
+    "fetched_at": { "type": "string", "format": "date-time" },
+    "method_acknowledged": { "type": "boolean" },
+    "approval_ref": { "type": "string", "minLength": 1 },
+    "files": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+    "memory_table": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

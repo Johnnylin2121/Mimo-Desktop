@@ -22,17 +22,21 @@
 Mimo-Desktop/                     ← 克隆到 {SKILLS_ROOT}
 ├── README.md                     ← 安装/技能清单/DSH→MiMo 替代矩阵
 ├── REPO-MAP.md                   ← 本文件
+├── AGENT-ISOLATION.md            ← 多 Agent 隔离与知识共享协议
 ├── LICENSE / .gitattributes / .gitignore
 ├── _shared/                      ← 跨技能共享（非 skill）
 │   ├── PORTABILITY.md            ← 双端写作规范
 │   ├── dsh-market.mjs            ← 行情/页面抓取（node fetch，绕 schannel）
-│   └── vault-batch.mjs           ← Obsidian 批量移动/结构体检
+│   ├── vault-batch.mjs           ← Obsidian 批量移动/结构体检
+│   └── native/                   ← Native 确定性处理器与契约
+├── .mimocode/workflows/          ← Native saved workflows
 ├── tools/
 │   └── validate-repo.mjs         ← 推送前门禁（frontmatter/密钥/绝对路径/垃圾文件）
 ├── trading-*/  (8)               ← A股复盘体系
 ├── amazon-*/   (3)               ← 亚马逊运营
 ├── obsidian-*/ (2) + domain-memory (1)
 ├── caveman*/   (5) + grill-me (1)
+├── *-native/   (11)              ← task/actor/workflow 原生变体（不覆盖原技能）
 └── skill-sync/                   ← 本仓同步流程（唯一真源规则）
 ```
 
@@ -49,7 +53,16 @@ Mimo-Desktop/                     ← 克隆到 {SKILLS_ROOT}
 
 ---
 
-## 2. 技能清单（22）
+## 1.1 多 Agent 隔离与共享
+
+- 每个 Agent 独立维护 skill、工具适配、权限和工作区；默认不读取或修改另一个 Agent 的运行时状态。
+- 经验、事实和已验证契约通过版本化知识库共享；Vault/domain-memory 或本仓文档是共享层，机器本地 memory 不是共享层。
+- 同一目标单写者，跨 Agent 协作必须显式 handoff；共享内容需脱敏、注明来源和版本，消费前先校验。
+- 详细协议见 [`AGENT-ISOLATION.md`](AGENT-ISOLATION.md)。
+
+---
+
+## 2. 技能清单（34）
 
 | 类别 | ID | 一句话 |
 |---|---|---|
@@ -70,6 +83,7 @@ Mimo-Desktop/                     ← 克隆到 {SKILLS_ROOT}
 | 效率 | caveman (+commit/compress/help/review) | 极简输出族 |
 | 通用 | grill-me | 苏格拉底拷问 |
 | 运维 | skill-sync | 本仓 git 同步 |
+| Native | trading-*-native / amazon-*-native（11） | task/actor/workflow、只读 lane、单写者与确定性契约；按 Agent 适配选择 |
 
 ---
 

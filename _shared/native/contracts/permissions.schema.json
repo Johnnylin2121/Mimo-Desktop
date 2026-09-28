@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mimo-native/permissions.schema.json",
+  "title": "MiMo Native Permission Manifest",
+  "type": "object",
+  "required": ["read", "write_project", "write_vault", "move_vault", "publish", "external_action", "scheduler"],
+  "properties": {
+    "read": { "type": "string", "enum": ["allow", "ask", "deny"] },
+    "write_project": { "type": "string", "enum": ["allow", "ask", "deny"] },
+    "write_vault": { "type": "string", "enum": ["allow", "ask", "deny"] },
+    "move_vault": { "type": "string", "enum": ["allow", "ask", "deny"] },
+    "publish": { "type": "string", "enum": ["allow", "ask", "deny"] },
+    "external_action": { "type": "string", "enum": ["allow", "ask", "deny"] },
+    "scheduler": { "type": "string", "enum": ["allow", "ask", "deny"] }
+  },
+  "additionalProperties": false
+}

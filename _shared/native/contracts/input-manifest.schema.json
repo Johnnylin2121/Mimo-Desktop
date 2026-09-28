@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mimo-native/input-manifest.schema.json",
+  "title": "MiMo Native Input Manifest",
+  "type": "object",
+  "required": ["manifest_version", "run_id", "as_of", "fetched_at", "files"],
+  "properties": {
+    "manifest_version": { "type": "string", "const": "1.0" },
+    "run_id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^(?!.*[\\\\/])(?![A-Za-z]:)(?!.*\\.\\.)[^\\u0000-\\u001f]+$" },
+    "as_of": { "type": "string", "format": "date-time" },
+    "fetched_at": { "type": "string", "format": "date-time" },
+    "files": {
+      "type": "object",
+      "required": ["previous_review", "day_before_review", "current_review", "plans", "memory"],
+      "properties": {
+        "previous_review": { "type": "string", "minLength": 1 },
+        "day_before_review": { "type": "string", "minLength": 1 },
+        "current_review": { "type": "string", "minLength": 1 },
+        "plans": { "type": "string", "minLength": 1 },
+        "memory": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

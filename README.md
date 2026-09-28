@@ -4,7 +4,7 @@ MiMo Desktop 技能配置仓库 — 从个人 DSH（DeepSeek Harness）技能集
 
 > **源仓库**：技能原版在 `Johnnylin2121/dsh-agent`（DSH 专用，本仓不回写、不推送该仓库）。
 > 本仓为 MiMo Desktop 适配版真源：`git@github.com:Johnnylin2121/Mimo-Desktop.git`。
-> **双端共维**：Windows 主机 + macOS 笔记本两台 MiMo Desktop 共同维护本仓 — 动手前先读 [`REPO-MAP.md`](REPO-MAP.md)（架构/放置规则/双端协议/脱敏规范/维护注意）与 [`_shared/PORTABILITY.md`](_shared/PORTABILITY.md)。
+> **双端共维**：Windows 主机 + macOS 笔记本两台 MiMo Desktop 共同维护本仓 — 动手前先读 [`REPO-MAP.md`](REPO-MAP.md)（架构/放置规则/双端协议/脱敏规范/维护注意）、[`AGENT-ISOLATION.md`](AGENT-ISOLATION.md)（多 Agent 隔离/知识共享）与 [`_shared/PORTABILITY.md`](_shared/PORTABILITY.md)。
 > 许可：MIT（见 `LICENSE`）。
 
 ## 安装
@@ -25,7 +25,7 @@ Copy-Item "$env:TEMP\Mimo-Desktop\*" "$HOME\.config\mimocode\skills\" -Recurse -
 
 ## 包含什么
 
-### Skills（21 个）
+### Skills（34 个）
 
 | 类别 | 技能 | 用途 |
 |------|------|------|
@@ -40,6 +40,7 @@ Copy-Item "$env:TEMP\Mimo-Desktop\*" "$HOME\.config\mimocode\skills\" -Recurse -
 | **Amazon** | `amazon-ad-analysis` | 广告数据分析与经营分析（8-Phase DAG + 产出校验） |
 | | `amazon-listing` | Listing优化（2026-07新政策：标题≤75+亮点≤125→五点→后台搜索词） |
 | | `amazon-product-selection` | 选品分析（卖家精灵/ABA关键词趋势） |
+| **Native** | `*-native`（11 个） | task/actor/workflow/确定性契约的 MiMo 原生变体；与现有技能并存，按 Agent 能力选择 |
 | **知识库** | `obsidian-vault-sync` | 文件同步到 Obsidian vault + wiki entities/topics |
 | | `obsidian-reconcile` | 检测 vault 中的矛盾信息 |
 | | `domain-memory` | 跨会话领域记忆管理（trading / amazon-* / general） |
@@ -53,11 +54,15 @@ Copy-Item "$env:TEMP\Mimo-Desktop\*" "$HOME\.config\mimocode\skills\" -Recurse -
 | | `find-skills` | skills.sh 生态搜索与安装（基于 KimYx0207/findskill，Windows/MiMo 适配） |
 | **仓库运维** | `skill-sync` | 与 GitHub 的同步流程（本仓专属） |
 
+Native 变体：`trading-daily-review-native`、`trading-contradiction-check-native`、`trading-memory-consolidate-native`、`trading-briefing-fetch-native`、`trading-briefing-review-native`、`trading-policy-impact-native`、`trading-stock-scan-native`、`trading-value-investing-native`、`amazon-ad-analysis-native`、`amazon-listing-native`、`amazon-product-selection-native`。它们不覆盖原技能，按 Agent 的执行模型与工具适配选择使用。
+
 ### 共享层
 
 - `_shared/dsh-market.mjs` — 轻量行情/页面抓取工具（node fetch/OpenSSL，规避 Windows schannel TLS 问题）
 - `_shared/vault-batch.mjs` — Obsidian vault 批量整理（移动/重命名/孤立悬空检测，零依赖）
 - `_shared/PORTABILITY.md` — 跨环境内容写作规范（占位符、解释器、命令写法）
+- `_shared/native/` — Native 技能的确定性处理器、契约与 schema；不含真实业务数据
+- `.mimocode/workflows/` — Native saved workflows（只读 lane、单写者汇总、blocked 传播）
 - `tools/validate-repo.mjs` — 仓库合规门禁（路径/垃圾文件/frontmatter）
 
 ## MiMo Desktop 适配要点
