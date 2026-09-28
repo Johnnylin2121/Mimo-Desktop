@@ -35,7 +35,7 @@ Mimo-Desktop/                     ← 克隆到 {SKILLS_ROOT}
 ├── trading-*/  (8)               ← A股复盘体系
 ├── amazon-*/   (3)               ← 亚马逊运营
 ├── obsidian-*/ (2) + domain-memory (1)
-├── caveman*/   (5) + grill-me (1)
+├── caveman*/   (5) + grill-me + session-handoff
 ├── *-native/   (11)              ← task/actor/workflow 原生变体（不覆盖原技能）
 └── skill-sync/                   ← 本仓同步流程（唯一真源规则）
 ```
@@ -62,7 +62,7 @@ Mimo-Desktop/                     ← 克隆到 {SKILLS_ROOT}
 
 ---
 
-## 2. 技能清单（34）
+## 2. 技能清单（35）
 
 | 类别 | ID | 一句话 |
 |---|---|---|
@@ -82,6 +82,7 @@ Mimo-Desktop/                     ← 克隆到 {SKILLS_ROOT}
 | | domain-memory | 领域记忆读写 |
 | 效率 | caveman (+commit/compress/help/review) | 极简输出族 |
 | 通用 | grill-me | 苏格拉底拷问 |
+| | session-handoff | 会话/Agent 自包含交接 + 累积坑库 |
 | 运维 | skill-sync | 本仓 git 同步 |
 | Native | trading-*-native / amazon-*-native（11） | task/actor/workflow、只读 lane、单写者与确定性契约；按 Agent 适配选择 |
 
