@@ -18,7 +18,7 @@ description: 早报自动层数据抓取（akshare+快讯）。商品价格表/�
 用户说：跑早报 / 抓今天的数据 / 生成早报草稿 / 数据表自动化
 
 ## 执行步骤
-1. 运行 `pwsh -NoProfile -File "{VAULT_PATH}\_系统\scripts\fetch-briefing.ps1"`（可加 `-Date YYYY-MM-DD` 指定日期）
+1. 运行 `pwsh -NoProfile -File "{VAULT_PATH}\_系统\scripts\fetch-briefing.ps1"`（可加 `-Date YYYY-MM-DD` 指定日期；脚本会自行打印选中的 vault / python / output 三行，先确认它们符合预期再取结果）
 2. 读取输出 `交易体系/09.新闻资讯/早读复核/早报数据/YYYY-MM-DD-财经早报-自动草稿.md`
 3. 呈现给用户：商品表（含 A50）/美股表/要闻筛选三块，标注 [待补] 项
 4. 会话内可做要闻初筛排序（六类关注方向），但**终筛结论与复核判断属于 trading-briefing-review**，此处不产出审阅结论
@@ -29,7 +29,7 @@ description: 早报自动层数据抓取（akshare+快讯）。商品价格表/�
 - 文件头部带"自动数据层、未经人工审核"标记；**不自动入库，永不回写正式早读**
 - 数据口径：商品/美股 = 最近两根日线收盘（与人工版"15:00→次日6:30"口径不同，复核时按 trading-briefing-review 的四态规则判定）；A50 = 新浪 hq.sinajs.cn hf_CHA50CFD（实时快照，字段0=最新/7=昨收）
 - **复核触发**：正式早读入库后由用户手动触发"复核早读"（trading-briefing-review）；本 skill 不自动触发复核
-- 依赖：Python + akshare。MiMo Desktop 用 `$PY = $env:MIMO_PYTHON`（内置含 pandas/openpyxl；**akshare 需自行安装到该解释器**，或改用 vault 内既有 `fetch-briefing.py` 依赖的解释器）。接口偶发失效时重试 1 次并保留 [待补]。跨端对照见 `_shared/PORTABILITY.md`。
+- 依赖：Python + akshare。**脚本已跨端化（2026-09-29）**——`fetch-briefing.ps1` 内无任何绝对路径，vault 根由脚本位置推导，解释器按「谁装了 akshare 谁上」自动探测（`-Python` > `$env:MIMO_PYTHON` > PATH 的 `python3`/`python`/`py`），Windows/Mac 同一份文件通用。⚠️ **不要假定 `$env:MIMO_PYTHON` 可用**：本机实测该解释器**未装 akshare**，脚本会自动回落到用户 Python 3.12。若报 `No module named 'akshare'`，对该解释器 `pip install akshare` 或用 `-Python` 指定。可用参数：`-Date` / `-OutputDir` / `-VaultRoot` / `-Python`。接口偶发失效时重试 1 次并保留 [待补]。跨端对照见 `_shared/PORTABILITY.md`。
 
 ## 配套
 - 可选第二信息源：若 vault 已有 `交易体系/09.新闻资讯/早读复核/早报数据/rss-digest/digests/` 历史文件，复核时可一并加载（无则跳过，不依赖任何 RSS 插件）
