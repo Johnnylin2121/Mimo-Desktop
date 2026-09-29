@@ -106,9 +106,9 @@ Get-ChildItem "{VAULT_PATH}\交易体系\交易记忆" -Filter "2026-*.md" | Sor
 ```
 ```bash
 # macOS
-dst="{VAULT_PATH}/交易体系/交易记忆/记忆归档"
+dst="{VAULT_PATH}/交易体系/07.交易记忆/记忆归档"
 mkdir -p "$dst"
-mv "{VAULT_PATH}"/交易体系/交易记忆/2026-*.md "$dst"/
+mv "{VAULT_PATH}"/交易体系/07.交易记忆/2026-*.md "$dst"/
 ```
 
 - **移动而非删除**（铁律：历史文件必须全部保留）

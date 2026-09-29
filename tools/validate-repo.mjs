@@ -10,9 +10,22 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 
-const ROOT = process.cwd();
+// 仓库根由脚本自身位置推导，不取 cwd——cwd 可能是另一个仓库，
+// 曾导致"校验通过"实际校验的是 dsh-agent（禁用动）。
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+try {
+  const top = execFileSync('git', ['rev-parse', '--show-toplevel'], { cwd: ROOT, encoding: 'utf8' }).trim();
+  if (path.resolve(top) !== ROOT) {
+    console.error(`脚本不在目标仓库根：脚本推导=${ROOT}，git 根=${top}`);
+    process.exit(2);
+  }
+} catch {
+  console.error(`${ROOT} 不是 git 仓库，无法校验`);
+  process.exit(2);
+}
 const problems = [];
 const warnings = [];
 
