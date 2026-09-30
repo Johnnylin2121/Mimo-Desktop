@@ -106,7 +106,8 @@ Get-ChildItem "{VAULT_PATH}\交易体系\交易记忆" -Filter "2026-*.md" | Sor
 ```
 ```bash
 # macOS
-dst="{VAULT_PATH}/交易体系/07.交易记忆/记忆归档"
+# 2026-09-30 OpenCode 修：原指向 `07.交易记忆/记忆归档`，该目录不存在；归档统一层为 `交易体系/_归档/交易记忆/`（2026-09-28 重组）
+dst="{VAULT_PATH}/交易体系/_归档/交易记忆"
 mkdir -p "$dst"
 mv "{VAULT_PATH}"/交易体系/07.交易记忆/2026-*.md "$dst"/
 ```
