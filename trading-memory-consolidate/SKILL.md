@@ -100,9 +100,10 @@ Get-ChildItem "{VAULT_PATH}\交易体系\交易记忆" -Filter "2026-*.md" |
 
 ```powershell
 # Windows
-$dst = "{VAULT_PATH}\交易体系\交易记忆\记忆归档"
+# 2026-09-30 修：原指向 `交易体系\交易记忆\记忆归档`（裸名目录，09-28 重组后不存在）；归档统一层为 `交易体系\_归档\交易记忆\`
+$dst = "{VAULT_PATH}\交易体系\_归档\交易记忆"
 New-Item -ItemType Directory -Force $dst | Out-Null
-Get-ChildItem "{VAULT_PATH}\交易体系\交易记忆" -Filter "2026-*.md" | Sort-Object Name | Move-Item -Destination $dst
+Get-ChildItem "{VAULT_PATH}\交易体系\07.交易记忆" -Filter "2026-*.md" | Sort-Object Name | Move-Item -Destination $dst
 ```
 ```bash
 # macOS
@@ -114,7 +115,7 @@ mv "{VAULT_PATH}"/交易体系/07.交易记忆/2026-*.md "$dst"/
 
 - **移动而非删除**（铁律：历史文件必须全部保留）
 - Obsidian wikilink 按文件名解析（不依赖路径），批量移动不破坏 `[[引用]]`
-- 移动后写 `记忆归档/交易记忆归档索引.md`：每篇一行（日期 / 主题 / 核心产出 / 已知问题标注——如"⚠️ 成本 4.77 为当时错误口径"）
+- 移动后写 `{VAULT_PATH}/交易体系/_归档/交易记忆/交易记忆归档索引.md`：每篇一行（日期 / 主题 / 核心产出 / 已知问题标注——如"⚠️ 成本 4.77 为当时错误口径"）
 
 ## 7. Step 5：挂链接（归档 ≠ 消失）
 

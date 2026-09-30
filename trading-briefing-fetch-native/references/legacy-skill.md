@@ -31,7 +31,7 @@ description: 早报自动层数据抓取（akshare+快讯）。商品价格表/�
 - 依赖：Python + akshare。MiMo Desktop 用 `$PY = $env:MIMO_PYTHON`（内置含 pandas/openpyxl；**akshare 需自行安装到该解释器**，或改用 vault 内既有 `fetch-briefing.py` 依赖的解释器）。接口偶发失效时重试 1 次并保留 [待补]。跨端对照见 `_shared/PORTABILITY.md`。
 
 ## 配套
-- 可选第二信息源：若 vault 已有 `交易体系/09.新闻资讯/早读复核/早报数据/rss-digest/digests/` 历史文件，复核时可一并加载（无则跳过，不依赖任何 RSS 插件）
+- 可选第二信息源：若 vault 已有 `交易体系/09.新闻资讯/早读复核/rss-digest/digests/` 历史文件，复核时可一并加载（无则跳过，不依赖任何 RSS 插件）
 - 复核流程：`trading-briefing-review` skill
 
 ## 脚本
